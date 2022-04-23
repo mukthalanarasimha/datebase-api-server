@@ -1,43 +1,32 @@
-const express = require("express")
-const Path = require("Path")
-const app = express()
-const {open} = require("sqlite")
-const sqlite3 = require("sqlite3")
+const express = require("express");
+const app = express();
+const path = require("Path");
+const { open } = required("sqlite");
+const sqlite3 = reqired("sqlite3");
+const dataPath = path.join(__dirname, cricketTeam.db);
 
-const dataBasePath = Path.join(__dirname,"cricketTeam.db")
+let dataBase = null;
 
-let dateBase = null
+const intializeDBAndServe = async () => {
+  try {
+    const database = await open({
+      filename: dataPath,
+      driver: sqlite3.database,
+    });
+    app.listen(3000, () => {
+      console.log("sucessFully running at https://localhost:3000/");
+    });
+  } catch (error) {
+    console.log(`DB Errror:${error.meassge}`);
+    process.exit(1);
+  }
+};
+intializeDBAndServe();
 
-const intializeDbAndServer = ()=>{
-    try{
-        database = open({
-        filename:dataBasePath,
-        driver:sqlite3.Database,
-    })
-    app.listen(3000,()=>
-    console.log("serve Running at http:Localhost:3000/"))
-    }catch(error){
-        console.log(`DB ERROR:${erro.message}`)
-        process.exit(1)
-    }
-    
-}
-intializeDbAndServer()
-const covertObjectToResponseObject = (dbObject){
-    return playerid:dbObject.player_id,
-           playerName:dbObject.player_name,
-           playerNumber:dbObject.jersey_Number,
-           role:dbObject.role
-}
-app.get("/players/",async (request,response)=>{
-     let getPlayerQuery = `
-     SELECT 
-     * 
-     FROM 
-     cricket_team`
-     const getPlayerList = await dateBase.all(getPlayerQuery)
-
-     response.send(playerArray.map((eachPlayer)=>
-     covertObjectToResponseObject(eachPlayer)))
-
-})
+app.get("/players/", async (request, response) => {
+  const { playerId, playerName, jerseyName, role } = request.params;
+  const getPlayerDetails = `
+SELECT * FROM cricket_team`;
+  const playerDetails = await dataBase.all(getPlayerDetails);
+  response.send(playerDetails);
+});
